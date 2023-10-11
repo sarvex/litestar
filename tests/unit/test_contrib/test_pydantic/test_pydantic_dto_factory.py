@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from typing_extensions import Annotated
 
 from litestar.contrib.pydantic import PydanticDTO
-from litestar.dto import dto_field
+from litestar.dto import DTOField, dto_field
 from litestar.dto.data_structures import DTOFieldDefinition
 from litestar.typing import FieldDefinition
 
@@ -39,3 +39,17 @@ def test_detect_nested_field() -> None:
 
     assert PydanticDTO.detect_nested_field(FieldDefinition.from_annotation(TestModel)) is True
     assert PydanticDTO.detect_nested_field(FieldDefinition.from_annotation(NotModel)) is False
+
+
+ReadOnlyInt = Annotated[int, DTOField("read-only")]
+
+
+def test_pydantic_dto_annotated_dto_field() -> None:
+    class Model(BaseModel):
+        a: Annotated[int, DTOField("read-only")]
+        b: ReadOnlyInt
+
+    dto_type = PydanticDTO[Model]
+    fields = list(dto_type.generate_field_definitions(Model))
+    assert fields[0].dto_field == DTOField("read-only")
+    assert fields[1].dto_field == DTOField("read-only")
