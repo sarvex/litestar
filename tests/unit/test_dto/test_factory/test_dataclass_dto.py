@@ -26,7 +26,7 @@ def fx_dto_type() -> type[DataclassDTO[Model]]:
     return DataclassDTO[Model]
 
 
-@pytest.mark.skipif(sys.version_info > (3, 8), reason="generic builtin collection")
+@pytest.mark.skipif(sys.version_info >= (3, 9), reason="generic builtin collection")
 def test_dataclass_field_definitions_38(dto_type: type[DataclassDTO[Model]]) -> None:
     expected = [
         replace(
@@ -58,7 +58,7 @@ def test_dataclass_field_definitions_38(dto_type: type[DataclassDTO[Model]]) -> 
             DTOFieldDefinition.from_field_definition(
                 field_definition=FieldDefinition.from_kwarg(
                     name="c",
-                    annotation=list[int],
+                    annotation=List[int],
                 ),
                 default_factory=list,
                 model_name=Model.__name__,
